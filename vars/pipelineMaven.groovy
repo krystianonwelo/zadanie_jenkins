@@ -4,7 +4,7 @@ def call(Map config = [:]) {
     config = defaultMap << config
     
     stage('demo') {
-        echo ${config.moduleName}
+        echo "${config.moduleName}"
     }
 }
 
