@@ -1,35 +1,35 @@
 
-def call(Map config = [:]) {
-    defaultMap = [moduleName: 'działa', environment: 'bar', repoName: 'baz']
-    config = defaultMap << config
+def call(Map config = [skipTests: 1, skipInstallingArtifacts: 1]) {
 
     node {
         stage('Cleanup Workspace') {
-
             cleanWs()
             sh 'echo "Cleaned Up Workspace For Project"'
-            
         }
-
-        stage("Tools initialization") {
-
-            sh "mvn --version"
-            sh "java -version"
- 
+        stage('Tools initialization') {
+            sh 'mvn --version'
+            sh 'java -version'
         }
 
         stage('Code Checkout') {
                 checkout scm
         }
-        stage('Test') {
-                sh 'mvn verify'
-
-                junit 'target/surefire-reports/*.xml'
-
+        stage('Build') {
+            sh 'mvn package -DskipTests'
         }
-        
+        stage('Test') {
+            if (config.skipTests == 0) {
+                sh 'mvn verify'
+            }
+            junit 'target/surefire-reports/*.xml'
+        }
+
         stage('Installing Artifacts') {
-            sh 'mvn install -DskipTests'
+            if (config.skipInstallingArtifacts == 0) {
+                sh 'mvn install -DskipTests'
+            } else {
+                echo 'Skipped Installing Artifacts'
+            }
         }
     }
 }
