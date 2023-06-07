@@ -10,14 +10,15 @@ def call(Map config = [:]) {
                 sh 'echo "Cleaned Up Workspace For Project"'
             }
         }
-
+        stage("Tools initialization") {
+            steps {
+                sh "mvn --version"
+                sh "java -version"
+            }
+        }
         stage('Code Checkout') {
             steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: 'origin/main']],
-                    userRemoteConfigs: [[url: 'https://github.com/spring-projects/spring-petclinic.git/']]
-                ])
+                checkout scm
             }
         }
         stage('Test') {
