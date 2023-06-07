@@ -4,14 +4,20 @@ def call(Map config = [:]) {
     config = defaultMap << config
 
     node {
-        stage('Downloading Source Code') {
-            steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[ url: 'https://github.com/krystianonwelo/spring-petclinic.git']]])
+        stage('Cleanup Workspace') {
+            steps {
+                cleanWs()
+                sh 'echo "Cleaned Up Workspace For Project"'
             }
         }
-        stage('Building Source Code') {
+
+        stage('Code Checkout') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: 'origin/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/spring-projects/spring-petclinic.git']]
+                ])
             }
         }
         stage('Test') {
