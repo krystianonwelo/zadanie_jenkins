@@ -1,6 +1,5 @@
 
 def call(Map config = [skipTests: 1, skipInstallingArtifacts: 1]) {
-
     node {
         stage('Cleanup Workspace') {
             cleanWs()
@@ -20,8 +19,10 @@ def call(Map config = [skipTests: 1, skipInstallingArtifacts: 1]) {
         stage('Test') {
             if (config.skipTests == 0) {
                 sh 'mvn verify'
+                junit   'target/surefire-reports/*.xml'
+            } else {
+                echo 'Skipped Testing'
             }
-            junit 'target/surefire-reports/*.xml'
         }
 
         stage('Installing Artifacts') {
