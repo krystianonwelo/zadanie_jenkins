@@ -5,24 +5,24 @@ def call(Map config = [:]) {
 
     node {
         stage('Cleanup Workspace') {
-            steps {
+            step {
                 cleanWs()
                 sh 'echo "Cleaned Up Workspace For Project"'
             }
         }
         stage("Tools initialization") {
-            steps {
+            step {
                 sh "mvn --version"
                 sh "java -version"
             }
         }
         stage('Code Checkout') {
-            steps {
+            step {
                 checkout scm
             }
         }
         stage('Test') {
-            steps {
+            step {
                 sh 'mvn verify'
             }
             post {
